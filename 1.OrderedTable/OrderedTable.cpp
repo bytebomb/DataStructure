@@ -97,10 +97,10 @@ void clear(Vector *vec)
   return;
 }
 
+#define MAX_OPT 20
 int main()
 {
-// 写随机测试用例
-#define MAX_OPT 20
+  // 写随机测试用例
   srand(time(0));
   int opt, index, value;
   Vector *vec = init(MAX_OPT);
