@@ -44,7 +44,7 @@ void output(LinkedList *l)
   {
     printf("->%d", p->data);
   }
-  printf("\n");
+  printf("\n\n");
 }
 
 // 链表销毁
@@ -79,7 +79,6 @@ int insert(LinkedList *l, int value, int index)
   node->next = p->next;
   p->next = node;
   l->length += 1;
-  output(l);
   return 1;
 }
 
@@ -98,8 +97,7 @@ int erase(LinkedList *l, int index)
   node = p->next; //先把要删除的存起来，否则失去控制造成内存泄漏
   p->next = p->next->next;
   free(node);
-  l->length -= 1;
-  output(l);
+  l->length -= 1; 
   return 1;
 }
 
@@ -133,6 +131,7 @@ int main()
     default:
       break;
     }
+    output(l);
   }
   // 销毁链表
   clear_linkedlist(l);

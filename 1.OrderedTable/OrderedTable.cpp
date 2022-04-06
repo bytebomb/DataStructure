@@ -21,12 +21,10 @@ Vector *init(int n)
 // 输出
 void output(Vector *vec)
 {
-  printf("Vector(%d) = [", vec->length);
+  printf("Vector(%d) = [ ", vec->length);
   for (int i = 0; i < vec->length; i++)
   {
-    if (i != 0)
-      printf(", ");
-    printf("%d", vec->data[i]);
+    printf("%d ", vec->data[i]);
   }
   printf("]\n\n");
   return;
@@ -66,7 +64,6 @@ int insert(Vector *vec, int index, int value)
   }
   vec->data[index] = value;
   vec->length += 1;
-  output(vec);
   return 1;
 }
 // 删除
@@ -83,7 +80,6 @@ int erase(Vector *vec, int index)
     vec->data[index] = vec->data[index + 1];
   }
   vec->length -= 1;
-  output(vec);
   return 1;
 }
 
@@ -124,6 +120,7 @@ int main()
     default:
       break;
     }
+    output(vec);
   }
 
   return 0;
