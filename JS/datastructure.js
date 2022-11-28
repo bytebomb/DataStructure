@@ -461,16 +461,180 @@ class DoublyLinkedList {
   }
 }
 
-let list = new DoublyLinkedList()
-list.append(1)
-list.append(2)
-list.append(3)
-list.append(4)
-list.append(5)
+// 哈希表（拉链法）
+class HashTable {
+  constructor() {
+    this.storage = []//存储空间
+    this.count = 0 //已经存在的个数
+    this.length = 7 //空间的大小
+  }
 
-list.insert(2, 6)
-list.update(2, 0)
-list.remove(0 )
-console.log(list.backwardString())
-console.log(list.get(0))
-console.log(list.indexOf(2))
+  //哈希函数
+  hashFn(str, size) {
+    let hashCode = 0
+    //1.将字符串转成较大的数字：hashCode
+    for (let i = 0; i < str.length; i++) {
+      hashCode = hashCode * 37 + str.charCodeAt(i) //37是一个常用的质数
+    }
+    //2.将hash压缩到数组范围之内
+    return hashCode % size
+  }
+
+  //判断质数
+  isPrime(num) {
+    //方法一：遍历2->num-1是否能被整除
+    //方法二：一个数若可以被因素分解，一个数一定小于等于sqrt(num),另一个数一定大于等于sqrt(num)。比如16
+    let n = parseInt(Math.sqrt(num))
+    for (let i = 2; i <= n; i++) {
+      if (num % i == 0) return false
+    }
+    return true
+  }
+
+  //获取质数
+  getPrime(num) {
+    while (!this.isPrime(num)) {
+      num++
+    }
+    return num
+  }
+
+  // 插入&修改操作
+  put(key, value) {
+    // 1.根据key获取对应的index
+    let index = this.hashFn(key, this.length)
+    // 2.根据index取出相对应的bucket
+    let bucket = this.storage[index]
+
+    // 3.创建
+    if (!bucket) {
+      bucket = []
+      this.storage[index] = bucket
+
+    }
+    // 4.修改
+    for (let i = 0; i < bucket.length; i++) {
+      let tuple = bucket[i]
+      if (tuple[0] === key) {
+        tuple[1] = value
+        return
+      }
+    }
+    // 5.添加
+    bucket.push([key, value])
+    this.count += 1
+
+    // 判断是否需要扩容
+    if (this.count / this.length > 0.75) {
+      this.resize(this.getPrime(this.length * 2))
+    }
+  }
+
+  // 获取操作
+  get(key, value) {
+    // 1.根据key获取对应的index
+    let index = this.hashFn(key, this.length)
+
+    // 2.根据index取出相对应的bucket
+    let bucket = this.storage[index]
+
+    // 3.判断bucket是否存在
+    if (bucket === null) {
+      return null
+    }
+
+    // 4.在buckent中找
+    for (let i = 0; i < bucket.length; i++) {
+      let tuple = bucket[i]
+      if (tuple[0] === key) {
+        return tuple[1]
+      }
+    }
+    // 5.没找到
+    return null
+  }
+
+  // 删除操作
+  remove(key, value) {
+    // 1.根据key获取对应的index
+    let index = this.hashFn(key, this.length)
+
+    // 2.根据index取出相对应的bucket
+    let bucket = this.storage[index]
+
+    // 3.判断bucket是否存在
+    if (bucket === null) {
+      return null
+    }
+
+    // 4.在buckent中找
+    for (let i = 0; i < bucket.length; i++) {
+      let tuple = bucket[i]
+      if (tuple[0] === key) {
+        bucket.splice(i, 1)
+        this.count--
+        // 判断是否需要减少容量
+        if (this.length > 7 && this.count / this.length < 0.25) {
+          let newSize = this.getPrime(Math.floor(this.length / 2))
+          this.resize(newSize)
+        }
+        return tuple[1]
+      }
+    }
+    // 5.没找到
+    return null
+  }
+
+  // 扩容
+  resize(newLength) {
+    // 1.保留旧的数据
+    let oldStorage = this.storage
+
+    // 2.新建数据
+    this.storage = []
+    this.count = 0
+    this.length = newLength
+    // 3.数据迁移
+    for (let i = 0; i < oldStorage.length; i++) {
+      // 取出桶里的数据
+      let bucket = oldStorage[i]
+      // 判断桶为空的情况
+      if (!bucket) continue
+      // 遍历桶
+      for (let j = 0; j < bucket.length; j++) {
+        // 取出数据，重新存
+        let tuple = bucket[j]
+        this.put(tuple[0], tuple[1])
+      }
+    }
+
+  }
+
+  // 判空
+  isEmpty() {
+    return !this.count
+  }
+
+  // 获取个数
+  size() {
+    return this.length
+  }
+}
+
+let ht = new HashTable()
+ht.put("a", 1)
+ht.put("b", 2)
+ht.put("c", 3)
+ht.put("d", 3)
+ht.put("e", 3)
+ht.put("f", 3)
+ht.put("g", 3)
+ht.put("h", 3)
+console.log(ht.size());
+
+ht.remove("b")
+ht.remove("c")
+ht.remove("d")
+ht.remove("e")
+ht.remove("f")
+console.log(ht.size());
