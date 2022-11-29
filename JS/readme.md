@@ -1,3 +1,10 @@
+## 栈(Stack)
+**特点**：
+- 先进后出(FILO)
+
+**实现方式**
+- 一般基于数组实现
+```javascript
 class Stack {
   constructor() {
     this.items = []
@@ -27,7 +34,7 @@ class Stack {
     return this.items.length
   }
 
-  //6.将栈的内容以字符串形式返回
+  //6.将栈结构的内容以字符串形式返回
   toString() {
     return this.items.join(" ")
   }
@@ -50,8 +57,16 @@ const dec2bin = (decNumber) => {
 
   return binaryString
 }
+console.log(dec2bin(100))
+```
 
+## 队列(Queue)
+**特点**：
+- 先进先出（FIFO)
 
+**实现方式**
+- 一般基于数组实现
+```javascript
 class Queue {
   constructor() {
     this.items = []
@@ -106,7 +121,16 @@ const passGame = (nameList, num) => {
   // 循环结束，剩最后一个人
   return q.front()
 }
+let l = [1, 2, 3, 4, 5, 6, 7, 8, 9,0]
+console.log(passGame(l, 4));
+```
+## 优先级队列(PriorityQueue)
+**特点**：
+- 具有优先级的队列(即可以插队的队列)
 
+**实现方式**
+- 将队列的插入方式升级一下，即根据优先级插入
+```javascript
 class PriorityQueue {
   constructor() {
     this.items = []
@@ -161,7 +185,23 @@ class PriorityQueue {
     return res
   }
 }
+```
 
+## 链表(LinkedList)
+**特点**：
+- 链表由元素本身和指向下一个元素的引用组成
+- 相比于数组的优点
+    - 链表中的元素在内存中不必是连续的
+    - 不必在创建时确定大小
+    - 插入和删除时时间复杂度为O(1),效率高
+- 相比于数组的缺点
+    - 链表进行元素访问时，无法通过下标直接访问元素，必须从第一个开始，不能跳过其中的任何一个元素
+    
+
+**实现方式**
+- 将队列的插入方式升级一下，即根据优先级插入
+
+```javascript
 // 链表
 class Node {
   constructor(data) {
@@ -296,7 +336,34 @@ class LinkedList {
     return str
   }
 }
+let list = new LinkedList()
+list.append(1)
+list.append(2)
+list.append(3)
+list.append(4)
+list.append(5)
 
+list.insert(0, 6)
+console.log(list.get(1));
+console.log(list.indexOf(6));
+console.log(list.update(0, 0));
+console.log(list.remove(3));
+console.log(list.toString());
+```
+
+## 双向链表(DoublyLinkedList)
+**特点**：
+- 可以从头部遍历到尾部，也可以从尾部遍历到头部
+- 相比于单向链表的优点
+    - 可以双向遍历
+- 相比于单向链表的缺点
+    - 插入和删除时要考虑4个引用，实现麻烦
+    - 占据空间大
+    
+
+**实现方式**
+- 根据单向链表，考虑双向的情况
+```javascript
 // 双向链表
 class DoublyLinkedNode {
   constructor(data) {
@@ -461,6 +528,56 @@ class DoublyLinkedList {
   }
 }
 
+let list = new DoublyLinkedList()
+list.append(1)
+list.append(2)
+list.append(3)
+list.append(4)
+list.append(5)
+
+list.insert(2, 6)
+list.update(2, 0)
+list.remove(0 )
+console.log(list.backwardString())
+console.log(list.get(0))
+console.log(list.indexOf(2))
+```
+
+## 哈希表(HashTable) 
+**特点**：
+- 可以提供非常快的查找-删除和插入操作
+- 相比于数组的优点
+    - 插入和删除操作效率比数组高 
+    - 进行查找时
+        - 如果是根据下标查找，数组效率高
+        - 如果根据内容查找，数组效率很低
+- 相比于树的优点
+    - 速度比树快，编码效率比树高 
+
+**缺点**    
+- 表中的元素是无序的，key是不允许重复的，空间利用率低
+
+**实现方式**
+- 基于数组实现，将数组的下标值通过hash函数进行变换获取hashcode,用于解决数组插入和删除效率低的问题
+- 一个大的数字转化成数组范围内下标的过程叫做哈希化，这个转化的函数叫做哈希函数，最终将数据插入到数组中，对整个结构进行封装，就形成了hash table
+- 哈希化得到重复的下标叫做冲突
+- 解决冲突的方法：
+    - 链地址法（拉链法）：每个元素存成数组或者链表
+    - 开放地址法：寻找空白的地方来存储，探测有3种方法：线性探测、二次探测、再哈希法
+- 哈希函数的选择
+    - 快速计算：不能太过复杂，尽量少的使用乘法和除法
+    - 均匀分布：要让存储的元素尽量均匀的分布在数组中，size和步长尽量选择质数
+    
+**扩容**  
+由于bucket是遍历查找，当bucket越来越长时，效率就会越来越慢，所以要进行扩容
+- 装载因子：loadfactor=count/length
+- 当loadfactor<0.25时空间进行压缩
+- 当loadfactor>0.75时空间进行扩容
+
+**质数**  
+根据数论原理，容量为质数有助于元素在哈希表中的均匀分布，所以扩容时最好使容量为质数
+
+```javascript
 // 哈希表（拉链法）
 class HashTable {
   constructor() {
@@ -621,6 +738,72 @@ class HashTable {
   }
 }
 
+let ht = new HashTable()
+ht.put("a", 1)
+ht.put("b", 2)
+ht.put("c", 3)
+ht.put("d", 3)
+ht.put("e", 3)
+ht.put("f", 3)
+ht.put("g", 3)
+ht.put("h", 3)
+console.log(ht.size());
+
+ht.remove("b")
+ht.remove("c")
+ht.remove("d")
+ht.remove("e")
+ht.remove("f")
+console.log(ht.size());
+```
+
+## 树结构(Tree) 
+**特点**：
+- 综合了数组，链表，哈希表等的优点，比较全，但不专
+
+**二叉树**： 
+
+每一个节点最多只有两个子节点的树称为二叉树，事实上每一棵树都能通过“儿子-兄弟”的表示法转化为二叉树。
+
+**二叉树的特性**： 
+- 对于非空的二叉树(k>=1)
+    - 深度为k的二叉树拥有的最大节点总数为2^k-1
+    - 第i层的二叉树最大节点总数为2^(i-1)
+    - 若n0表示叶子节点的个数，n2表示度为2的非叶子节点的个数，n0=n2+1 
+    
+**完美二叉树**
+
+除了最下层，每一层的子节点树都为二
+
+**完全二叉树**
+
+除了最下层，每一层的节点总数都达到最大，倒数第二层只能缺右子节点，并且本层节点的子节点不能比前一个节点的子节点多，完全二叉树包含完美二叉树
+
+**实现方式**
+- 数组一般用于表示完全二叉树，如果表示不完全二叉树，要转换成完全二叉树，但这会造成空间浪费
+- 所以一般用链表来表示二叉树
+
+### 二叉搜索树(BST,binary search tree)
+**特点**
+- 二叉搜索树属于二叉树，可以为空
+- 如果非空，则要满足
+    - 非空左子树的所有键值要小于其根节点的键值
+    - 非空右子树的所有键值要大于其根节点的键值
+    - 左右子树本身也是二叉搜索树
+- 以上特性导致二叉搜索树的查找、插入、删除效率高效率非常高，时间复杂度为O(logN)
+
+
+**遍历**
+
+根据父节点的位置：
+- 前序遍历
+- 中序遍历
+- 后序遍历
+
+**前驱&后继**
+- 比节点小一点点数为节点的前驱，节点的前驱一定是左子树中的最大值
+- 比节点大一点点数为节点的后继，节点的后继一定是右子树中的最小值
+```javascript
 class TreeNode {
   constructor(key) {
     this.key = key
@@ -850,3 +1033,15 @@ console.log(b.min())
 console.log(b.search(1))
 b.remove(4)
 b.preOrderTraversal(console.log)
+```
+
+### 红黑树
+如果插入连续的数字，则会导致二叉搜索树向链表的方向发展，层级很深，即非平衡树，效率变低，为了保持平衡，设计出了AVL树和红黑树两种平衡树，而**红黑树**是实践当中常用的树。
+
+**特性**
+- 节点是红色或者黑色
+- 根节点是黑色的
+- 每个叶子节点都是黑色的空节点（NIL）
+- 每个红色节点的两个子节点都是黑色（从每个叶子到根的所有路径上不能有连续两个红色节点）
+- 从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点
+
