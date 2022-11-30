@@ -757,7 +757,7 @@ class BinarySearchTree {
     }
     // 3.判断寻找到的后继节点是否直接就是delNode的right
     if (successor != delNode.right) {
-      successorParent.left = successor.right  
+      successorParent.left = successor.right
       successor.right = delNode.right
     }
     return successor
@@ -825,28 +825,133 @@ class BinarySearchTree {
 
 
 
+// 图（邻接表法）
+class Graph {
+  constructor() {
+    this.vertexs = [] //顶点
+    this.edges = new Map() //边
+  }
 
-let b = new BinarySearchTree()
-b.insert(11)
-b.insert(7)
-b.insert(15)
-b.insert(5)
-b.insert(3)
-b.insert(9)
-b.insert(8)
-b.insert(10)
-b.insert(13)
-b.insert(12)
-b.insert(14)
-b.insert(20)
-b.insert(18)
-b.insert(25)
-b.remove(7)
-b.remove(9)
-b.remove(15)
-b.midOrderTraversal(console.log)
-console.log(b.max())
-console.log(b.min())
-console.log(b.search(1))
-b.remove(4)
-b.preOrderTraversal(console.log)
+  // 添加顶点
+  addVertex(v) {
+    this.vertexs.push(v)
+    this.edges.set(v, new Set()) //键为顶点，值为其他顶点的集合，表示线
+  }
+
+  //添加边
+  addEdges(v1, v2) {
+    // 两个顶点都添加边
+    let e1 = this.edges.get(v1)
+    let e2 = this.edges.get(v2)
+    if (e1 && e2) {
+      e1.add(v2)
+      e2.add(v1)
+      return true
+    }
+    return false
+  }
+
+  // 转化字符串（输出为成邻接表）
+  toString() {
+    let str = ''
+    this.vertexs.forEach(item => {
+      str += item + "->"
+      this.edges.get(item).forEach(ele => {
+        str += ele + " "
+      })
+      str += '\n'
+    })
+    return str
+  }
+
+  // 遍历
+  // 初始化颜色 white=未被访问，grey=被访问，未探索，black=已探索
+  initializedColor() {
+    let colors = {}
+    this.vertexs.forEach(v => {
+      colors[v] = "white"
+    })
+    return colors
+  }
+  // 1.BFS
+  bfs(firstV, handler) {
+    // 1.初始化颜色
+    let colors = this.initializedColor()
+
+    // 2.新建队列
+    let queue = []
+
+    //3.第一个顶点入队
+    queue.push(firstV)
+
+    // 4.顶点出队，邻接点入队
+    while (queue.length) {
+      // 4.1 取出队首
+      let v = queue.shift()
+
+      // 4.2 改为灰色 
+      colors[v] = "grey"
+
+      // 4.3 邻接点依次入队
+      this.edges.get(v).forEach(i => {
+        // 判断一下，防止重复添加（有的顶点被多个节点连着）
+        if (colors[i] == "white") {
+          colors[i] = "grey"
+          queue.push(i)
+        }
+      })
+
+      // 5.访问节点
+      handler(v)
+
+      // 6.改为黑色
+      colors[v] = "black"
+    }
+  }
+  // 2.DFS
+  dfs(firstV, handler) {
+    // 1.初始化颜色
+    let colors = this.initializedColor()
+
+    // 2.从顶点递归访问
+    this.dfsVisit(firstV, colors, handler)
+
+  }
+  dfsVisit(v, colors, handler) {
+
+    //1.颜色设置为灰色
+    colors[v] = "grey"
+    // 2.处理顶点
+    handler(v)
+
+    // 3.访问相连的顶点
+    this.edges.get(v).forEach(i => {
+      if (colors[i] == "white") {
+        this.dfsVisit(i, colors, handler)
+      }
+    })
+
+    // 4.v颜色设置为黑色
+    colors[v] = "black"
+  }
+}
+
+let g = new Graph()
+let vs = ["A", "B", "C", "D", "E", "F", "G", "H"]
+vs.forEach(item => {
+  g.addVertex(item)
+})
+
+g.addEdges("A", "B")
+g.addEdges("A", "C")
+g.addEdges("A", "D")
+g.addEdges("C", "D")
+g.addEdges("C", "G")
+g.addEdges("D", "G")
+g.addEdges("D", "H")
+g.addEdges("B", "E")
+g.addEdges("B", "F")
+g.addEdges("E", "I")
+console.log(g.toString());
+g.bfs(g.vertexs[0], console.log)
+g.dfs(g.vertexs[0], console.log)
